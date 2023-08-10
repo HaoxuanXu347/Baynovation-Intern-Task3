@@ -1,0 +1,62 @@
+/* Add some padding and margin to the form */
+form {
+    padding: 20px;
+    margin: 30px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+  
+  /* Style the labels */
+label {
+    font-size: 16px;
+    font-weight: bold;
+}
+  
+  
+nav {
+    position: absolute;
+    top: 0px;
+    left:0px;
+    background-color: rgb(46, 143, 217); 
+    width: 1600px;
+    height: 70px;
+    border-radius: 5px;
+}
+
+ul {
+    list-style-type: none; /* Remove the default bullet points from the list */
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    display: inline; /* Display the list items horizontally */
+}
+
+a {
+    position: relative;
+    top: 25px;
+    font-size: large;
+    font-weight: bold;
+    color: rgb(2, 2, 2); /* Set the link color to white */
+    text-decoration: none; /* Remove underlines from links */
+    padding: 10px; /* Add some padding to the links */
+}
+
+a:hover {
+    background-color: aqua; /* Change the background color of links on hover */
+    border-radius: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 50%;
+    margin: 50px auto;
+}
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+
