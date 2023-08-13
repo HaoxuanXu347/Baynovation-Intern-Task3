@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Rate Lookup</title>
+    <style>
+    body {
+        background-image: url("/static/background.jpg"); 
+        background-size: cover;
+        background-repeat: no-repeat; 
+    }
+    nav {
+    background-color:#F5F5DC;
+    padding: 5px;
+    position: fixed;
+    width: 250px; height: 100%;
+    }
+    nav a {
+    display: block; /* Makes links stack vertically */
+    margin-bottom: 40px; /* Adds space between links */
+    margin-left: 20px;
+    padding: 5px; /* Adds some padding around the links */
+    text-decoration: none;
+    color: blue;
+    position: relative;
+    top:50px;
+    }
+    #section1, #section2, #section3, #section4,  #section5{
+    padding-top: 5px;
+    min-height: 120vh; /* Full viewport height */
+    }
+
+    div h1{
+        position: relative;
+        text-align: center;
+    }
+    </style>
+    
+</head>
+<body>
+
+    <nav>
+        <a href="#section1" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Home Page</a>
+        <a href="#section2" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Break Even Point Analysis</a>
+        <a href="#section3" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Cumulative Savings Calculation</a>
+        <a href="#section4" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Real-time Mortgage</a>
+        <a href="#section5" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Amortization_Schedule</a>
+    </nav>
+    
+    <div id="section1">
+        <h1>Refinance break-even point Calculator</h1>
+
+        <h2> Data</h2>
+        <table border="1"  style="position: relative; left: 280px; top: 70px;">
+            <tr>
+                <th>Column</th>
+                <th>Description</th>
+            </tr>
+            {% for key, value in description.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    
+        
+    </div>
+
+    <div id="section2">
+    <h1>Break Even Point Analysis</h1>
+
+    <div style="position: relative; left: 280px; top: 30px;" >
+    <p style="font-size: large;"><strong>Note</strong></p>
+    <ul>
+        <li>Only for those who want to lower their monthly payment.</li>
+    </ul>
+    <hr>
+    <h4>1. Monthly Payment</h4>
+    <p>The monthly payment is calculated using the following formula:</p>
+    <center>
+        <p>\( M = P \frac{r(1 + r)^n}{(1+r)^n - 1} \)</p>
+    </center>
+    <p>where \( M \) is the monthly payment, \( P \) is the principal (Outstanding balance), \( r \) is the monthly interest rate, and \( n \) is the number of months.</p>
+    <h4>2. Outstanding Balance</h4>
+    <p>The outstanding balance is calculated using the following formula:</p>
+    <center>
+        <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
+    </center></div>
+      
+        <form style="position: relative; left: 280px; top: 100px;" action="/" method="post">
+            <label for="p">Principal:</label>
+            <input type="number" id="p" name="p" required><br><br>
+          
+            <label for="r">Current interest rate:</label>
+            <input type="number" id="r" name="r" required><br><br>
+    
+            <label for="N">Current total term:</label>
+            <input type="number" id="N" name="N" required><br><br>
+    
+            <label for="n">Current remaining term:</label>
+            <input type="number" id="n" name="n" required><br><br>
+    
+            <label for="new_r">New interest rate:</label>
+            <input type="number" id="new_r" name="new_r" required><br><br>
+    
+            <label for="new_n">New remaining term:</label>
+            <input type="number" id="new_n" name="new_n" required><br><br>
+    
+            <label for="c">Closing cost:</label>
+            <input type="number" id="c" name="c" required><br><br>
+    
+            <label for="co">Cash out amount:</label>
+            <input type="number" id="co" name="co" required><br><br>
+    
+            <button type="submit">Calculate</button>
+        </form>
+        {% if result %}
+            <div style="position: absolute; right: 200px; top: 1500px;">
+            <h3>Results:</h3>
+            <p>Break-even Point: {{ result['break_even_point'] }} months</p>
+            <p>Monthly Savings: {{ result.monthly_savings }}</p>
+            <p>outstanding_principal_balance_adjusted: {{ result.outstanding_principal_balance_adjusted }}</p>
+            <p>current_monthly_payment: {{ result.current_monthly_payment }}</p>
+            <p>new_monthly_payment: {{ result.new_monthly_payment }}</p>
+            <p>new_monthly_payment_adjusted: {{ result.new_monthly_payment_adjusted }}</p>
+        
+            </div>
+        {% endif %}
+
+        <div style="position: absolute; right: 70px; bottom: 30px; font-size: large; font-weight: bold;">
+            Baynovation<br>
+            Info@baynovation.com<br>
+            San Jose, CA 95134
+        </div>
+    </div>
+
+    <div id="section3">
+        <h1>Cumulative Savings Calculation</h1>
+    </div>
+
+    <div id="section4">
+        <h1>Real-time Mortgage</h1>
+    </div>
+
+
+    <div id="section5">
+        <h1>Amortization_Schedule</h1>
+    </div>
+
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    
+
+    
+</body>
+</html>

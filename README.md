@@ -15,3 +15,25 @@ Your main responsibilities will include:
 4. Testing and Optimization: Thoroughly test the application to identify and fix any bugs or issues. Optimize the performance of the application to ensure quick responsiveness.
 
 5. Documentation: Prepare documentation that outlines how the application works, its features, and any technical details that may be relevant for future maintenance.
+
+rate_df = get_mortgagerate() 
+
+<table style="position: absolute; right: 50px; top: 200px;">
+        <thead>
+            <tr>
+                <th>Rate Type</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in rate_data.iterrows() %}
+            <tr>
+                <td>{{ row['rate_type'] }}</td>
+                <td>{{ row['rate'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+       <img src="/static/logo.jpeg" alt="Baynovation Logo" 
+    style="position: absolute; left: 30px; top: 80px; font-size: small; border-radius: 100%;">
