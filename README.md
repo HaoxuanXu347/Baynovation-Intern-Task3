@@ -37,3 +37,7 @@ rate_df = get_mortgagerate()
 
        <img src="/static/logo.jpeg" alt="Baynovation Logo" 
     style="position: absolute; left: 30px; top: 80px; font-size: small; border-radius: 100%;">
+
+    <p>PV Cost without Refinance: {{ result_CS.current_pv_total_costs }}</p>
+                <p>PV Cost with Refinance: {{ result_CS.new_pv_total_costs }}</p>
+                <p>PV Savings: {{ result_CS.pv_total_costs_savings }}</p>

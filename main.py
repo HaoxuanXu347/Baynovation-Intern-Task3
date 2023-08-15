@@ -28,13 +28,6 @@ description = {
     "Closing Cost ($)": "The cost associated with refinancing the mortgage."
 }
 
-
-
-def lovely_soup(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    return soup
-
 #-------------------------Break Even Point Analysis-----------------------
 '''
     This function calculates and provides the break-even point, monthly savings, and new payment details, considering the closing costs and any cash-out during refinancing.
@@ -89,21 +82,12 @@ def mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co):
         'new_monthly_payment_adjusted': new_monthly_payment_adjusted # v cash out
     }
 
-@app.route('/', methods=['POST'])
-def calculate():
-    p     = float(request.form['p'])
-    r     = float(request.form['r'])
-    N     = float(request.form['N'])
-    n     = float(request.form['n'])
-    new_r = float(request.form['new_r'])
-    new_n = float(request.form['new_n'])
-    c     = float(request.form['c'])
-    co    = float(request.form['co'])
-
-    result =  mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
-    return render_template('mortgage_calculator.html', result=result, description = description)
-
 #-------------------------Cumulative Savings Calculation-----------------------
+
+def lovely_soup(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    return soup
 
 def get_discount():
     url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202307"
@@ -144,23 +128,14 @@ def mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, 
     # Nominal Total Cost Savings
     nominal_total_costs_savings = current_nominal_total_costs - new_nominal_total_costs
     
-    # PV Total Cost for Current Mortgage
-    current_pv_total_costs = sum([current_monthly_payment / ((1 + monthly_discount_rate) ** month) for month in range(1, current_remaining_term + 1)])
-    # PV Total Cost for New Mortgage
-    new_pv_total_costs = sum([new_monthly_payment / ((1 + monthly_discount_rate) ** month) for month in range(1, new_remaining_term + 1)]) + closing_cost
-    # PV Total Cost Savings
-    pv_total_costs_savings = current_pv_total_costs - new_pv_total_costs
+
     
     return{
         'Nominal Cost without Refinance': current_nominal_total_costs,
         'Nominal Cost with Refinance': new_nominal_total_costs,
         'Nominal Savings': nominal_total_costs_savings,
-        'PV Cost without Refinance': current_pv_total_costs,
-        'PV Cost with Refinance': new_pv_total_costs,
-        'PV Savings': pv_total_costs_savings
+      
     }
-    
-
 #-------------------------Real-Time Mortgage-----------------------
 
 def get_mortgagerate():
@@ -185,10 +160,84 @@ def get_mortgagerate():
 
 #-------------------------Amortization_Schedule-----------------------
 
+def loan_amortization_schedule(principal, rate, term):
+    
+    '''
+    Generate an amortization schedule for a loan given the principal amount, interest rate, and term.
+
+    Returns:
+    A DataFrame containing the amortization schedule, monthly outstanding principal,
+    monthly payments, principal and interest components of the payment, 
+    and cumulative payments over the term of the loan.
+    '''
+    
+    monthly_interest_rate = rate / 12 / 100
+    monthly_payment = principal * monthly_interest_rate * (1 + monthly_interest_rate) ** term / ((1 + monthly_interest_rate) ** term - 1)
+    
+    outstanding_principal = principal
+    records = []
+    cumulative_principal_payment = 0
+    cumulative_interest_payment = 0 
+    
+    for month in range(1, term + 1):
+        interest_payment = outstanding_principal * monthly_interest_rate
+        principal_payment = monthly_payment - interest_payment
+        cumulative_principal_payment += principal_payment
+        cumulative_interest_payment += interest_payment
+        cumulative_payment = cumulative_principal_payment + cumulative_interest_payment
+        outstanding_principal -= principal_payment
+        records.append([month, outstanding_principal, monthly_payment, principal_payment, interest_payment, 
+                        cumulative_principal_payment, cumulative_interest_payment, cumulative_payment])
+    df = pd.DataFrame(records, columns=['Month', 'Outstanding Principal', 'Monthly Payment', 'Principal Payment', 'Interest Payment', 
+                                        'Cumulative Principal Payment', 'Cumulative Interest Payment', 'Cumulative Payment'])
+    return df
+
+
+#-------------------------Home-----------------------
+@app.route('/', methods=['POST'])
+def calculate_refinance():
+
+
+
+    if request.method == 'POST':
+        # Amortization Schedule Calculation
+        principal    = float(request.form['principal'])
+        rate         = float(request.form['rate'])
+        term         = int(request.form['term'])
+        df = loan_amortization_schedule(principal, rate, term)
+        table_html = df.to_html(index=False, classes="amortization-table")
+
+        rate_df =  get_mortgagerate()
+        return render_template('mortgage_calculator.html', description = description, table_html=table_html, rate_data = rate_df)
+    else:
+
+        # Refinance Calculation
+        discount_rate = get_discount()
+        discount_rate = discount_rate / 100
+        p     = float(request.form['p'])
+        r     = float(request.form['r'])
+        N     = int(request.form['N'])
+        n     = int(request.form['n'])
+        new_r = float(request.form['new_r'])
+        new_n = int(request.form['new_n'])
+        c     = float(request.form['c'])
+        co    = float(request.form['co'])
+        result =  mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
+        result_CS =  mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, discount_rate)
+
+        rate_df =  get_mortgagerate()
+        return render_template('mortgage_calculator.html', result=result, result_CS=result_CS, 
+                           discount_rate = discount_rate, description = description, rate_data = rate_df)
+
 
 @app.route("/")
 def home():    
-    return render_template("mortgage_calculator.html", description=description)
+    rate_df =  get_mortgagerate()
+    return render_template("mortgage_calculator.html", rate_data = rate_df,  description = description)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
 

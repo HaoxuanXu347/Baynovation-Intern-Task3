@@ -4,41 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mortgage Rate Lookup</title>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
     <style>
-    body {
-        background-image: url("/static/background.jpg"); 
-        background-size: cover;
-        background-repeat: no-repeat; 
-    }
-    nav {
-    background-color:#F5F5DC;
-    padding: 5px;
-    position: fixed;
-    width: 250px; height: 100%;
-    }
-    nav a {
-    display: block; /* Makes links stack vertically */
-    margin-bottom: 40px; /* Adds space between links */
-    margin-left: 20px;
-    padding: 5px; /* Adds some padding around the links */
-    text-decoration: none;
-    color: blue;
-    position: relative;
-    top:50px;
-    }
-    #section1, #section2, #section3, #section4,  #section5{
-    padding-top: 5px;
-    min-height: 120vh; /* Full viewport height */
-    }
+        body {
+            background-image: url("/static/background.jpg"); 
+            background-size: cover;
+            background-repeat: no-repeat; 
+        }
+        #nav-toggle {
+            font-size: 30px;
+            cursor: pointer;
+            position: fixed;
+            top: 6%; 
+            right: 30px;
+            z-index: 1001;
+            transform: translateY(-50%); 
+        }
+        nav {
+            background-color: #dbdbde;
+            position: fixed;
+            top: 0;
+            right: -250px; 
+            width: 250px;
+            height: 100%;
+            padding: 5px;
+            overflow: auto;
+            z-index: 1000;
+            transition: right 0.3s; 
+        }
+        nav.open {
+            right: 0;
+        }
+        nav a {
+            display: block;
+            margin-bottom: 40px;
+            margin-left: 20px;
+            padding: 5px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            font-size: large;
+            text-align: center;
+            position: relative;
+            top: 100px;
+        }
 
-    div h1{
-        position: relative;
-        text-align: center;
-    }
+        #section1, #section2, #section3, #section4,  #section5{
+            padding-top: 5px;
+            min-height: 120vh; 
+        }
+
+        div h1{
+            position: relative;
+            text-align: center;
+        }
+        .active {
+            color: red; 
+        }
+
+        .amortization-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .amortization-table th, .amortization-table td {
+            padding: 10px;
+            border: 1px solid black;
+            text-align: center;
+        }
     </style>
     
 </head>
 <body>
+    <div id="nav-toggle">&#9776;</div>
 
     <nav>
         <a href="#section1" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Home Page</a>
@@ -50,9 +89,10 @@
     
     <div id="section1">
         <h1>Refinance break-even point Calculator</h1>
-
-        <h2> Data</h2>
-        <table border="1"  style="position: relative; left: 280px; top: 70px;">
+        <h2 style="position: relative; left: 80px; top: 40px;"> Data</h2>
+        <h2 style="position: relative; left: 830px; top: 0px;"> Formulas</h2>
+        <hr>
+        <table border="1"  style="position: relative; left: 80px; top: 30px;">
             <tr>
                 <th>Column</th>
                 <th>Description</th>
@@ -64,37 +104,33 @@
             </tr>
             {% endfor %}
         </table>
-    
-        
+
+        <div style="position: absolute; right: 50px; top: 180px;" >
+            <hr>
+            <h4>1. Monthly Payment</h4>
+            <p>The monthly payment is calculated using the following formula:</p>
+            <center>
+                <p>\( M = P \frac{r(1 + r)^n}{(1+r)^n - 1} \)</p>
+            </center>
+            <p>where \( M \) is the monthly payment, \( P \) is the principal (Outstanding balance), \( r \) is 
+            <br> the monthly interest rate, and \( n \) is the number of months.</p>
+            <h4>2. Outstanding Balance</h4>
+            <p>The outstanding balance is calculated using the following formula:</p>
+            <center>
+                <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
+            </center></div>
     </div>
 
-    <div id="section2">
-    <h1>Break Even Point Analysis</h1>
 
-    <div style="position: relative; left: 280px; top: 30px;" >
-    <p style="font-size: large;"><strong>Note</strong></p>
-    <ul>
-        <li>Only for those who want to lower their monthly payment.</li>
-    </ul>
-    <hr>
-    <h4>1. Monthly Payment</h4>
-    <p>The monthly payment is calculated using the following formula:</p>
-    <center>
-        <p>\( M = P \frac{r(1 + r)^n}{(1+r)^n - 1} \)</p>
-    </center>
-    <p>where \( M \) is the monthly payment, \( P \) is the principal (Outstanding balance), \( r \) is the monthly interest rate, and \( n \) is the number of months.</p>
-    <h4>2. Outstanding Balance</h4>
-    <p>The outstanding balance is calculated using the following formula:</p>
-    <center>
-        <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
-    </center></div>
-      
-        <form style="position: relative; left: 280px; top: 100px;" action="/" method="post">
-            <label for="p">Principal:</label>
+    <div id="section2" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h1 style="text-align: center;">Break Even Point Analysis</h1>
+        <div style="display: flex; justify-content: space-around;">
+            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
+                <label for="p">Principal:</label>
             <input type="number" id="p" name="p" required><br><br>
           
             <label for="r">Current interest rate:</label>
-            <input type="number" id="r" name="r" required><br><br>
+            <input type="float" id="r" name="r" required><br><br>
     
             <label for="N">Current total term:</label>
             <input type="number" id="N" name="N" required><br><br>
@@ -103,7 +139,7 @@
             <input type="number" id="n" name="n" required><br><br>
     
             <label for="new_r">New interest rate:</label>
-            <input type="number" id="new_r" name="new_r" required><br><br>
+            <input type="float" id="new_r" name="new_r" required><br><br>
     
             <label for="new_n">New remaining term:</label>
             <input type="number" id="new_n" name="new_n" required><br><br>
@@ -113,13 +149,12 @@
     
             <label for="co">Cash out amount:</label>
             <input type="number" id="co" name="co" required><br><br>
-    
             <button type="submit">Calculate</button>
-        </form>
-        {% if result %}
-            <div style="position: absolute; right: 200px; top: 1500px;">
-            <h3>Results:</h3>
-            <p>Break-even Point: {{ result['break_even_point'] }} months</p>
+            </form>
+            {% if result %}
+            <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
+                <h3>Results:</h3>
+                <p>Break-even Point: {{ result['break_even_point'] }} months</p>
             <p>Monthly Savings: {{ result.monthly_savings }}</p>
             <p>outstanding_principal_balance_adjusted: {{ result.outstanding_principal_balance_adjusted }}</p>
             <p>current_monthly_payment: {{ result.current_monthly_payment }}</p>
@@ -127,39 +162,139 @@
             <p>new_monthly_payment_adjusted: {{ result.new_monthly_payment_adjusted }}</p>
         
             </div>
-        {% endif %}
-
-        <div style="position: absolute; right: 70px; bottom: 30px; font-size: large; font-weight: bold;">
-            Baynovation<br>
-            Info@baynovation.com<br>
-            San Jose, CA 95134
+            {% endif %}
         </div>
     </div>
 
-    <div id="section3">
-        <h1>Cumulative Savings Calculation</h1>
+    <div id="section3" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h1 style="text-align: center;">Cumulative Savings Calculation</h1>
+        <div style="display: flex; justify-content: space-around;">
+            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
+                <label for="p">Principal:</label>
+            <input type="number" id="p" name="p" required><br><br>
+          
+            <label for="r">Current interest rate:</label>
+            <input type="float" id="r" name="r" required><br><br>
+    
+            <label for="N">Current total term:</label>
+            <input type="number" id="N" name="N" required><br><br>
+    
+            <label for="n">Current remaining term:</label>
+            <input type="number" id="n" name="n" required><br><br>
+    
+            <label for="new_r">New interest rate:</label>
+            <input type="float" id="new_r" name="new_r" required><br><br>
+    
+            <label for="new_n">New remaining term:</label>
+            <input type="number" id="new_n" name="new_n" required><br><br>
+    
+            <label for="c">Closing cost:</label>
+            <input type="number" id="c" name="c" required><br><br>
+    
+            <label for="co">Cash out amount:</label>
+            <input type="number" id="co" name="co" required><br><br>
+            
+            <button type="submit">Calculate</button>
+            </form>
+            {% if result_CS  %}
+            <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
+                <h3>Results:</h3>
+                <p>Nominal Cost without Refinance: {{ result_CS ['current_nominal_total_costs'] }} months</p>
+                <p>Nominal Cost with Refinance: {{ result_CS.new_nominal_total_costs }}</p>
+                <p>Nominal Savings: {{ result_CS.nominal_total_costs_savings }}</p>
+                <p>Discount_rate: {{ discount_rate }}</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
 
-    <div id="section4">
-        <h1>Real-time Mortgage</h1>
+    
+    <div id="section4" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h1 style="text-align: center;">Real-time Mortgage</h1>
+        <div style="display: flex; justify-content: space-around; position: absolute; top: 3700px; left: 25%;">
+            <table style="width: 100%; border-collapse: collapse; padding: 10px;
+            border: 1px solid black;
+            text-align: center;">
+                <tr>
+                    <th style="padding: 10px;  border: 1px solid black; text-align: center;">Rate Type</th>
+                    {% for index, row in rate_data.iterrows() %}
+                    <td style="padding: 10px;  border: 1px solid black; text-align: center;">{{ row['rate_type'] }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th style="padding: 10px;  border: 1px solid black; text-align: center;">Rate</th>
+                    {% for index, row in rate_data.iterrows() %}
+                    <td style="padding: 10px;  border: 1px solid black; text-align: center;">{{ row['rate'] }}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+
+           
+
+            
+        </div>
+
+        <div class="container">
+            <h2>Fixed-Rate Mortgage</h2>
+            <p>A fixed-rate mortgage is a type of mortgage where the interest rate remains constant for the entire term of the loan. This provides borrowers with predictable monthly payments over the life of the loan.</p>
+            
+            <h2>Adjustable-Rate Mortgage (ARM)</h2>
+            <p>An adjustable-rate mortgage, or ARM, has an interest rate that can change periodically. Typically, an ARM starts with a lower initial rate that adjusts after a set period. Borrowers should be aware of potential rate fluctuations.</p>
+            
+            <h2>Interest-Only Mortgage</h2>
+            <p>With an interest-only mortgage, borrowers only pay the interest on the loan for a specific period. After that, they start paying both principal and interest. It can offer lower initial payments but may result in a larger final payment.</p>
+            
+            <h2>Federal Housing Administration (FHA) Loan</h2>
+            <p>An FHA loan is a government-backed mortgage insured by the Federal Housing Administration. It is designed to help low-to-moderate-income borrowers with lower down payments and more lenient credit requirements.</p>
+            
+            <h2>Veterans Affairs (VA) Loan</h2>
+            <p>VA loans are available to eligible veterans, active-duty service members, and some members of the National Guard and Reserves. These loans typically require no down payment and offer favorable terms.</p>
+            
+            <h2>Jumbo Loan</h2>
+            <p>A jumbo loan is a type of mortgage that exceeds the conforming loan limits set by government agencies. They are often used for high-priced properties and may have stricter qualification requirements.</p>
+        </div>
     </div>
 
 
-    <div id="section5">
-        <h1>Amortization_Schedule</h1>
+    <div id="section5" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h1 style="text-align: center;">Amortization_Schedule</h1>
+        <div style="display: flex; justify-content: space-around;">
+            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
+                <label for="p">Principal:</label>
+            <input type="number" id="principal" name="principal" required><br><br>
+          
+            <label for="r">Rate:</label>
+            <input type="float" id="rate" name="rate" required><br><br>
+    
+            <label for="N">Term:</label>
+            <input type="number" id="term" name="term" required><br><br>
+            
+            <button type="submit">Calculate</button>
+            </form>
+            {% if table_html  %}
+            <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
+                <h3>Results:</h3>
+                {{ table_html|safe }}
+            </div>
+            {% endif %}
+        </div>
     </div>
-
 
     <script>
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
-                });
             });
         });
+    });
+
+    document.getElementById('nav-toggle').addEventListener('click', function() {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('open'); 
+        });
+
     </script>
     
 
