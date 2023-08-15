@@ -164,38 +164,19 @@
             </div>
             {% endif %}
         </div>
+
+        {% if plot1_path %}
+                <img src="{{ url_for('static', filename=plot1_path.split('/')[-1]) }}" alt="Monthly Payment Comparison" style="width: 50%; height: 50%; position: absolute; right: 20%">
+            {% endif %}
+
+        {% if plot2_path %}
+                <img src="{{ url_for('static', filename=plot2_path.split('/')[-1]) }}" alt="Loan Amortization Schedule">
+            {% endif %}
     </div>
 
     <div id="section3" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Cumulative Savings Calculation</h1>
         <div style="display: flex; justify-content: space-around;">
-            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
-                <label for="p">Principal:</label>
-            <input type="number" id="p" name="p" required><br><br>
-          
-            <label for="r">Current interest rate:</label>
-            <input type="float" id="r" name="r" required><br><br>
-    
-            <label for="N">Current total term:</label>
-            <input type="number" id="N" name="N" required><br><br>
-    
-            <label for="n">Current remaining term:</label>
-            <input type="number" id="n" name="n" required><br><br>
-    
-            <label for="new_r">New interest rate:</label>
-            <input type="float" id="new_r" name="new_r" required><br><br>
-    
-            <label for="new_n">New remaining term:</label>
-            <input type="number" id="new_n" name="new_n" required><br><br>
-    
-            <label for="c">Closing cost:</label>
-            <input type="number" id="c" name="c" required><br><br>
-    
-            <label for="co">Cash out amount:</label>
-            <input type="number" id="co" name="co" required><br><br>
-            
-            <button type="submit">Calculate</button>
-            </form>
             {% if result_CS  %}
             <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
                 <h3>Results:</h3>
@@ -259,18 +240,6 @@
     <div id="section5" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Amortization_Schedule</h1>
         <div style="display: flex; justify-content: space-around;">
-            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
-                <label for="p">Principal:</label>
-            <input type="number" id="principal" name="principal" required><br><br>
-          
-            <label for="r">Rate:</label>
-            <input type="float" id="rate" name="rate" required><br><br>
-    
-            <label for="N">Term:</label>
-            <input type="number" id="term" name="term" required><br><br>
-            
-            <button type="submit">Calculate</button>
-            </form>
             {% if table_html  %}
             <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
                 <h3>Results:</h3>

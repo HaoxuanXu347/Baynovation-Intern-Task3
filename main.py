@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import FuncFormatter
+import matplotlib
+matplotlib.use('Agg')
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -88,6 +91,14 @@ def lovely_soup(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     return soup
+
+def thousands_formatter(x, pos):
+    return f'{x/1000:.0f}K'
+
+def save_plot(plt, filename):
+    path = f"static/{filename}"
+    plt.savefig(path)
+    return path
 
 def get_discount():
     url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202307"
@@ -193,27 +204,112 @@ def loan_amortization_schedule(principal, rate, term):
     return df
 
 
+
+#---------------------------------Visualization---------------------------------
+def plot_monthly_payment(p, r, N, n, new_r, new_n, c, co):
+    
+    '''
+    Plot a comparison of monthly payments between the current mortgage plan and the potential refinanced mortgage plans.
+    '''
+    
+    # Results from the mortgage_refinance_calculation function
+    refinance_results = mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
+    current_monthly_payment = refinance_results['current_monthly_payment']
+    new_monthly_payment = refinance_results['new_monthly_payment']
+    new_monthly_payment_adjusted = refinance_results['new_monthly_payment_adjusted']
+    outstanding_payment = refinance_results['outstanding_principal_balance_adjusted'] - co
+    outstanding_payment_adjusted = refinance_results['outstanding_principal_balance_adjusted']
+    monthly_savings = refinance_results['monthly_savings']
+    monthly_savings_adjusted = current_monthly_payment - new_monthly_payment_adjusted
+    
+    # The types of payments and their labels
+    payments_type = [current_monthly_payment, new_monthly_payment]
+    labels = [
+        f'Current Mortgage Plan\nOutstanding: ${outstanding_payment:,.2f}\n{r}% APR\n{n} months remaining',
+        f'Refinance Mortgage Plan Without Cash Out\nOutstanding: ${outstanding_payment:,.2f}\n{new_r}% APR\n{new_n} months remaining'
+    ]
+    
+    # Include cash-out details if provided
+    if co != 0:
+        payments_type.append(new_monthly_payment_adjusted)
+        labels.append(f'Refinance Mortgage Plan With Cash Out\nOutstanding: ${outstanding_payment_adjusted:,.2f}\n{new_r}% APR\n{new_n} months remaining')
+    
+    plt.figure(figsize = (4, 3))
+    bars = plt.bar(labels, payments_type, color = ['black', 'blue', 'lightblue'])
+    plt.ylabel('Monthly Payment ($)')
+    plt.title('Monthly Payment Comparison')
+    plt.xticks(ha='center', fontsize = 8)
+    for bar in bars:
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 100, f'${bar.get_height():,.2f}', ha = 'center', va = 'bottom', fontsize = 15)
+        
+    plt.axhline(y = new_monthly_payment, color = 'red', linestyle = '--')
+    plt.axhline(y = new_monthly_payment_adjusted, color = 'green', linestyle = '--')
+    
+    # Annotate some details
+    plt.annotate(f'Monthly Savings: ${monthly_savings:,.2f}', 
+                 xy = (1, new_monthly_payment), 
+                 xycoords = 'data', 
+                 xytext = (50, 20), 
+                 textcoords = 'offset points', 
+                 arrowprops = dict(arrowstyle = "->", lw = 1.5))
+    
+    plt.annotate(f'Difference: ${monthly_savings_adjusted:,.2f}', 
+                 xy = (2, new_monthly_payment_adjusted), 
+                 xycoords = 'data', 
+                 xytext = (50, 10), 
+                 textcoords = 'offset points', 
+                 arrowprops = dict(arrowstyle = "->", lw = 1.5))
+    
+    plt.tight_layout()
+    
+    plot_path = os.path.join('static', 'monthly_payment.png')
+    plt.savefig(plot_path)
+    
+    return plot_path
+
+def plot_loan_amortization_schedule(p, r, N, n, new_r, new_n, c, co):
+    
+    '''
+    Plot a comparison of the cumulative payments over time for the current loan 
+    versus a potential refinanced loan.
+    '''
+    
+    refinance_results = mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
+    outstanding_principal_balance = refinance_results['outstanding_principal_balance_adjusted'] - co
+    
+    # Generate amortization schedules
+    current_schedule_df = loan_amortization_schedule(outstanding_principal_balance, r, n)
+    new_schedule_df = loan_amortization_schedule(outstanding_principal_balance, new_r, new_n)
+    # Add a year column
+    current_schedule_df['Year'] = ((current_schedule_df['Month'] - 1) / 12).astype(int) + 1
+    new_schedule_df['Year'] = ((new_schedule_df['Month'] - 1) / 12).astype(int) + 1
+    # Group by year and sum the payments
+    current_grouped = current_schedule_df.groupby('Year').max()
+    new_grouped = new_schedule_df.groupby('Year').max()
+    
+    plt.figure(figsize = (14,7))
+
+    plt.scatter(current_grouped.index, current_grouped['Cumulative Payment'], label = 'Current Cumulative Payment', color = 'black')
+    plt.scatter(new_grouped.index, new_grouped['Cumulative Payment'], label = 'New Cumulative Payment', color = 'blue')
+    plt.plot(current_grouped.index, current_grouped['Cumulative Payment'], color = 'black')
+    plt.plot(new_grouped.index, new_grouped['Cumulative Payment'], color = 'blue')
+
+    plt.title('Cumulative Payments Over Time')
+    plt.xlabel('Year')
+    plt.ylabel('Amount ($)')
+    formatter = FuncFormatter(thousands_formatter)
+    plt.gca().yaxis.set_major_formatter(formatter)
+    
+    plt.legend()
+    plt.tight_layout()
+    
+    return save_plot(plt, "plot2.png")
+
 #-------------------------Home-----------------------
 @app.route('/', methods=['POST'])
 def calculate_refinance():
 
-
-
-    if request.method == 'POST':
-        # Amortization Schedule Calculation
-        principal    = float(request.form['principal'])
-        rate         = float(request.form['rate'])
-        term         = int(request.form['term'])
-        df = loan_amortization_schedule(principal, rate, term)
-        table_html = df.to_html(index=False, classes="amortization-table")
-
-        rate_df =  get_mortgagerate()
-        return render_template('mortgage_calculator.html', description = description, table_html=table_html, rate_data = rate_df)
-    else:
-
-        # Refinance Calculation
-        discount_rate = get_discount()
-        discount_rate = discount_rate / 100
+        discount_rate = get_discount() / 100
         p     = float(request.form['p'])
         r     = float(request.form['r'])
         N     = int(request.form['N'])
@@ -224,16 +320,22 @@ def calculate_refinance():
         co    = float(request.form['co'])
         result =  mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
         result_CS =  mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, discount_rate)
+        df = loan_amortization_schedule(p, new_r, new_n)
+        table_html = df.to_html(index=False, classes="amortization-table")
 
+        plot1_path = plot_monthly_payment(p, r, N, n, new_r, new_n, c, co)
         rate_df =  get_mortgagerate()
-        return render_template('mortgage_calculator.html', result=result, result_CS=result_CS, 
-                           discount_rate = discount_rate, description = description, rate_data = rate_df)
 
+        return render_template('mortgage_calculator.html', result=result, result_CS=result_CS, 
+                               discount_rate=discount_rate, description=description, 
+                               rate_data=rate_df, table_html=table_html, plot1_path=plot1_path, 
+                               )
 
 @app.route("/")
-def home():    
-    rate_df =  get_mortgagerate()
-    return render_template("mortgage_calculator.html", rate_data = rate_df,  description = description)
+def home():
+    rate_df = get_mortgagerate()
+    return render_template("mortgage_calculator.html", rate_data=rate_df, description=description)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
