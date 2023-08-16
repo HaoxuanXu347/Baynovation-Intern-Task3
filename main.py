@@ -31,6 +31,20 @@ description = {
     "Closing Cost ($)": "The cost associated with refinancing the mortgage."
 }
 
+def lovely_soup(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    return soup
+
+def thousands_formatter(x, pos):
+    return f'{x/1000:.0f}K'
+
+def save_plot(plt, filename):
+    path = f"static/{filename}"
+    plt.savefig(path)
+    return path
+
+
 #-------------------------Break Even Point Analysis-----------------------
 '''
     This function calculates and provides the break-even point, monthly savings, and new payment details, considering the closing costs and any cash-out during refinancing.
@@ -86,20 +100,6 @@ def mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co):
     }
 
 #-------------------------Cumulative Savings Calculation-----------------------
-
-def lovely_soup(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    return soup
-
-def thousands_formatter(x, pos):
-    return f'{x/1000:.0f}K'
-
-def save_plot(plt, filename):
-    path = f"static/{filename}"
-    plt.savefig(path)
-    return path
-
 def get_discount():
     url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202307"
     soup = lovely_soup(url)
@@ -139,13 +139,20 @@ def mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, 
     # Nominal Total Cost Savings
     nominal_total_costs_savings = current_nominal_total_costs - new_nominal_total_costs
     
-
+    # PV Total Cost for Current Mortgage
+    current_pv_total_costs = sum([current_monthly_payment / ((1 + monthly_discount_rate) ** month) for month in range(1, current_remaining_term + 1)])
+    # PV Total Cost for New Mortgage
+    new_pv_total_costs = sum([new_monthly_payment / ((1 + monthly_discount_rate) ** month) for month in range(1, new_remaining_term + 1)]) + closing_cost
+    # PV Total Cost Savings
+    pv_total_costs_savings = current_pv_total_costs - new_pv_total_costs
     
     return{
         'Nominal Cost without Refinance': current_nominal_total_costs,
         'Nominal Cost with Refinance': new_nominal_total_costs,
         'Nominal Savings': nominal_total_costs_savings,
-      
+        'PV Cost without Refinance': current_pv_total_costs,
+        'PV Cost with Refinance': new_pv_total_costs,
+        'PV Savings': pv_total_costs_savings
     }
 #-------------------------Real-Time Mortgage-----------------------
 
@@ -303,7 +310,102 @@ def plot_loan_amortization_schedule(p, r, N, n, new_r, new_n, c, co):
     plt.legend()
     plt.tight_layout()
     
-    return save_plot(plt, "plot2.png")
+    plot_path = os.path.join('static', 'loan_schedule.png')
+    plt.savefig(plot_path)
+    
+    return plot_path
+
+def plot_break_even_period(p, r, N, n, new_r, new_n, c, co):
+    
+    '''
+    Plot the break-even period for mortgage refinancing.
+    Defined as the number of months it takes for the cumulative monthly savings from refinancing to equal or exceed the closing costs.
+    '''
+    
+    refinance_results = mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
+    
+    new_remaining_term = new_n
+    closing_cost = c
+    monthly_savings = refinance_results['monthly_savings']
+    
+    cumulative_savings = [monthly_savings * i for i in range(1, (new_remaining_term  + 1))]
+    
+    # Break even point
+    break_even_month = 0
+    for i, savings in enumerate(cumulative_savings):
+        if savings >= c:
+            break_even_month = i + 1
+            break
+        
+    plt.figure(figsize = (15, 6))
+    plt.plot(range(1, new_remaining_term + 1), cumulative_savings, label = 'Cumulative Savings', color = 'blue')
+    plt.axhline(y = closing_cost, color = 'r', linestyle = '--', label = 'Closing Cost')
+    plt.axvline(x = break_even_month, color = 'g', linestyle = '--', label = 'Break-even Month')
+    plt.scatter(break_even_month, closing_cost, color = 'black', zorder = 5, label = 'Break-even Point') # highlight break-even point
+    plt.annotate(f'Month {break_even_month}', 
+                (break_even_month, closing_cost), 
+                textcoords = 'offset points', 
+                xytext = (-15,15), ha = 'center', fontsize = 12,
+                arrowprops = dict(arrowstyle = "->", lw = 1.5))
+    plt.xlabel('Months')
+    plt.ylabel('Cumulative Savings ($)')
+    plt.legend()
+    plt.grid(True)
+    plt.title('Break-even Period for Mortgage Refinancing')
+    
+    plot_path = os.path.join('static', 'break_even_period.png')
+    plt.savefig(plot_path)
+    
+    return plot_path
+
+def plot_savings_interval(p, r, N, n, new_r, new_n, c, co, year_interval = 7):
+    
+    '''
+    Plot the cumulative savings for mortgage refinancing over a specified interval of years.
+    
+    Note:
+    - The closing cost is assumed to be paid in advance.
+    '''
+    
+    refinance_results = mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
+    monthly_savings = refinance_results['monthly_savings']
+    
+    # Cumulative savings cashflow
+    cashflow = [-c]
+    cashflow.extend([monthly_savings] * new_n)
+    cumulative_cashflow = np.cumsum(cashflow)
+    
+    # Display: 0 for closing cost, first year, intervals, last year
+    indices_display = [0, 12] + list(range(12 * year_interval, new_n + 1, 12 * year_interval))
+    indices_display = [i for i in indices_display if i <= new_n]
+    if indices_display[-1] != new_n:
+        indices_display.append(new_n)
+
+    y = list(reversed(range(len(indices_display))))  # Reverse the y-values
+    x = [cumulative_cashflow[i] for i in indices_display]
+    labels = ['Cost'] + [f'Year {i // 12}' for i in indices_display[1:]]
+    colors = ['red' if val < 0 else 'blue' for val in x]
+    
+    plt.figure(figsize = (15, 6))
+    bars = plt.barh(y, x, tick_label = labels, color = colors)
+    plt.ylabel('Year')
+    plt.xlabel('Cumulative Savings ($)')
+    formatter = FuncFormatter(thousands_formatter)
+    plt.gca().xaxis.set_major_formatter(formatter)
+    for bar, value in zip(bars, x):
+        if value < 0:
+            plt.text(max(x) * 0.08, bar.get_y() + bar.get_height()/2 , f'${value:,.0f}', va = 'center', ha = 'right', fontsize = 14)
+        else:
+            plt.text(value + max(x) * 0.01, bar.get_y() + bar.get_height()/2 , f'${value:,.0f}', va = 'center', ha = 'left', fontsize = 14)
+    plt.title('Total Cumulative Savings for Mortgage Refinancing')
+    plt.grid(True, axis = 'x')
+    plt.tight_layout()
+    
+    plot_path = os.path.join('static', 'plot_savings_interval.png')
+    plt.savefig(plot_path)
+    
+    return plot_path
+
 
 #-------------------------Home-----------------------
 @app.route('/', methods=['POST'])
@@ -324,12 +426,16 @@ def calculate_refinance():
         table_html = df.to_html(index=False, classes="amortization-table")
 
         plot1_path = plot_monthly_payment(p, r, N, n, new_r, new_n, c, co)
+        plot2_path = plot_loan_amortization_schedule(p, r, N, n, new_r, new_n, c, co)
+        plot3_path = plot_break_even_period(p, r, N, n, new_r, new_n, c, co)
+        plot4_path = plot_savings_interval(p, r, N, n, new_r, new_n, c, co, year_interval = 7)
+        
         rate_df =  get_mortgagerate()
 
         return render_template('mortgage_calculator.html', result=result, result_CS=result_CS, 
                                discount_rate=discount_rate, description=description, 
                                rate_data=rate_df, table_html=table_html, plot1_path=plot1_path, 
-                               )
+                               plot2_path=plot2_path, plot3_path=plot3_path, plot4_path=plot4_path)
 
 @app.route("/")
 def home():

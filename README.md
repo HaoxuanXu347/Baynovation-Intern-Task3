@@ -41,3 +41,7 @@ rate_df = get_mortgagerate()
     <p>PV Cost without Refinance: {{ result_CS.current_pv_total_costs }}</p>
                 <p>PV Cost with Refinance: {{ result_CS.new_pv_total_costs }}</p>
                 <p>PV Savings: {{ result_CS.pv_total_costs_savings }}</p>
+
+ {% if plot1_path %}
+                <img src="{{ url_for('static', filename=plot1_path.split('/')[-1]) }}" alt="Monthly Payment Comparison" style="width: 70%; height: 70%; position: absolute; right: 20%">
+            {% endif %}
