@@ -1,22 +1,39 @@
+"""
+Project Name: Refinance Break Even Point Web Application
+Author: Haoxuan Xu
+Credit: Shuyan Kang
+Date: 8/9/23 - 8/17/23
+
+Description:
+    develop a web application or GUI that assists users in calculating the refinance break-even point for their loans. 
+    The main functionality of this application will involve allowing users to input relevant information such as current 
+    loan details, interest rates, loan term, closing costs, and any potential new loan details.
+
+Functions:
+    1. Break Even Point Analysis
+    2. Cumulative Savings Calculation
+    3. Mortgage Rates
+    4. Amortization_Schedule
+    
+"""
+
 # packages
 from flask import Flask, render_template, request, redirect
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from matplotlib.ticker import FuncFormatter
-import matplotlib
-matplotlib.use('Agg')
 import os
-
 import requests
-from bs4 import BeautifulSoup
-
+import matplotlib
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import plotly.express as px
 import ipywidgets as widgets
+from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
 from IPython.display import display
 from IPython.display import clear_output
-import plotly.express as px
+from matplotlib.ticker import FuncFormatter
 
+matplotlib.use('Agg')
 
 app = Flask(__name__)
 
@@ -421,8 +438,9 @@ def calculate_refinance():
         c     = float(request.form['c'])
         co    = float(request.form['co'])
         result =  mortgage_refinance_calculation(p, r, N, n, new_r, new_n, c, co)
-        result_CS =  mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, discount_rate)
+        result1 =  mortgage_refinance_total_costs_calculation(p, r, N, n, new_r, new_n, c, co, discount_rate)
         df = loan_amortization_schedule(p, new_r, new_n)
+        df = df.round(2)
         table_html = df.to_html(index=False, classes="amortization-table")
 
         plot1_path = plot_monthly_payment(p, r, N, n, new_r, new_n, c, co)
@@ -432,8 +450,8 @@ def calculate_refinance():
         
         rate_df =  get_mortgagerate()
 
-        return render_template('mortgage_calculator.html', result=result, result_CS=result_CS, 
-                               discount_rate=discount_rate, description=description, 
+        return render_template('mortgage_calculator.html', result=result, result1=result1, 
+                               description=description, 
                                rate_data=rate_df, table_html=table_html, plot1_path=plot1_path, 
                                plot2_path=plot2_path, plot3_path=plot3_path, plot4_path=plot4_path)
 

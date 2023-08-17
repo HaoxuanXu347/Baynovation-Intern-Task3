@@ -76,7 +76,7 @@
     </style>
     
 </head>
-<body style="height: 5000px;">
+<body style="height: 15000px;">
     <div id="nav-toggle">&#9776;</div>
 
     <nav>
@@ -165,13 +165,12 @@
             {% if result %}
             <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
                 <h3>Results:</h3>
-            <p>Break-even Point: {{ result['break_even_point'] }} months</p>
-            <p>Monthly Savings: {{ result.monthly_savings }}</p>
-            <p>outstanding_principal_balance_adjusted: {{ result.outstanding_principal_balance_adjusted }}</p>
-            <p>current_monthly_payment: {{ result.current_monthly_payment }}</p>
-            <p>new_monthly_payment: {{ result.new_monthly_payment }}</p>
-            <p>new_monthly_payment_adjusted: {{ result.new_monthly_payment_adjusted }}</p>
-        
+            <p>Break-even Point: {{ result['break_even_point']|round(2) }} months</p>
+            <p>Monthly Savings: {{ result['monthly_savings']|round(2)  }}</p>
+            <p>outstanding_principal_balance_adjusted: {{ result['outstanding_principal_balance_adjusted']|round(2)  }}</p>
+            <p>current_monthly_payment: {{ result['current_monthly_payment']|round(2)  }}</p>
+            <p>new_monthly_payment: {{ result['new_monthly_payment']|round(2)  }}</p>
+            <p>new_monthly_payment_adjusted: {{ result['new_monthly_payment_adjusted']|round(2)  }}</p>
             </div>
             {% endif %}
         </div>
@@ -184,13 +183,12 @@
     <div id="section3" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Cumulative Savings Calculation</h1>
         <div style="display: flex; justify-content: space-around;">
-            {% if result_CS  %}
+            {% if result1  %}
             <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px; position: absolute;left: 10%">
                 <h3>Results:</h3>
-                <p>Nominal Cost without Refinance: {{ result_CS ['current_nominal_total_costs'] }} months</p>
-                <p>Nominal Cost with Refinance: {{ result_CS.new_nominal_total_costs }}</p>
-                <p>Nominal Savings: {{ result_CS.nominal_total_costs_savings }}</p>
-                <p>Discount_rate: {{ discount_rate }}</p>
+                <p>Nominal Cost without Refinance: {{ result1['Nominal Cost without Refinance']|round(2) }}</p>
+                <p>Nominal Cost with Refinance: {{ result1['Nominal Cost with Refinance']|round(2) }}</p>
+                <p>Nominal Savings: {{ result1['Nominal Savings']|round(2) }}</p>
             </div>
             {% endif %}
         </div>
@@ -248,15 +246,14 @@
         </div>
     </div>
 
-
     <div id="section5" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Amortization_Schedule</h1>
-        <div style="display: flex; justify-content: space-around; background-image: url('/static/background.jpg'); background-size: cover;">
-            {% if table_html  %}
-            <div style="width: 80%; border-left: 2px solid #ccc; padding-left: 20px; position: absolute;left: 10%">
+        <div style="display: flex; justify-content: space-evenly; background-image: url('/static/background.jpg'); background-size: cover; background-repeat: no-repeat;">
+            {% if table_html %}
+            <div style="width: 80%; border-left: 2px solid #ccc; padding-left: 20px; margin-left: 100px; overflow: auto;">
                 <h3>Results:</h3>
-                <div style="width: 80%; overflow-x: auto;">
-                    <table style="width: 50%; height: 50%;">
+                <div style="width: 100%; overflow-x: auto;">
+                    <table style="width: 50%; max-width: 100%;">
                         {{ table_html|safe }}
                     </table>
                 </div>
@@ -264,6 +261,7 @@
             {% endif %}
         </div>
     </div>
+    
     
 
     <script>
