@@ -1,5 +1,7 @@
 # Baynovation-Intern-Task3
 
+Credit: Shuyan Kang
+
 The main functionality of this application will involve allowing users to input relevant information such as current loan details, interest rates, loan term, closing costs, and any potential new loan details.
 
 Once the user provides this information, the application will generate a graphical representation of the refinance break-even point. This graph will automatically adjust itself as users change their input values, providing them with a clear visualization of when it makes financial sense for them to refinance their loans.
@@ -16,32 +18,3 @@ Your main responsibilities will include:
 
 5. Documentation: Prepare documentation that outlines how the application works, its features, and any technical details that may be relevant for future maintenance.
 
-rate_df = get_mortgagerate() 
-
-<table style="position: absolute; right: 50px; top: 200px;">
-        <thead>
-            <tr>
-                <th>Rate Type</th>
-                <th>Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for index, row in rate_data.iterrows() %}
-            <tr>
-                <td>{{ row['rate_type'] }}</td>
-                <td>{{ row['rate'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-       <img src="/static/logo.jpeg" alt="Baynovation Logo" 
-    style="position: absolute; left: 30px; top: 80px; font-size: small; border-radius: 100%;">
-
-    <p>PV Cost without Refinance: {{ result_CS.current_pv_total_costs }}</p>
-                <p>PV Cost with Refinance: {{ result_CS.new_pv_total_costs }}</p>
-                <p>PV Savings: {{ result_CS.pv_total_costs_savings }}</p>
-
- {% if plot1_path %}
-                <img src="{{ url_for('static', filename=plot1_path.split('/')[-1]) }}" alt="Monthly Payment Comparison" style="width: 70%; height: 70%; position: absolute; right: 20%">
-            {% endif %}
