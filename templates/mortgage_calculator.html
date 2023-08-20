@@ -3,58 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mortgage Rate Lookup</title>
+    <title>Refinance Break Even Point Web Application</title>
     <script type="text/javascript" async
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
     <style>
         body {
-            background-image: url("/static/background.jpg"); 
+            background-color: rgb(239, 234, 234);
             background-size: cover;
-            background-repeat: no-repeat; 
+            background-repeat: no-repeat;
+            width: 100%; /* or any specific value you prefer */
+            margin: 0 ;
         }
-        #nav-toggle {
-            font-size: 30px;
+        #getStarted {
+            background-color: rgb(93, 183, 153);
+            font-size: 15px;
             cursor: pointer;
             position: fixed;
+            border-radius: 10px;
             top: 6%; 
             right: 30px;
             z-index: 1001;
             transform: translateY(-50%); 
         }
-        nav {
-            background-color: #dbdbde;
-            position: fixed;
-            top: 0;
-            right: -250px; 
-            width: 250px;
-            height: 100%;
-            padding: 5px;
-            overflow: auto;
-            z-index: 1000;
-            transition: right 0.3s; 
-        }
-        nav.open {
-            right: 0;
-        }
-        nav a {
-            display: block;
-            margin-bottom: 40px;
-            margin-left: 20px;
-            padding: 5px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-            font-size: large;
-            text-align: center;
-            position: relative;
-            top: 100px;
+
+        nav{
+            background-color: rgb(113, 182, 113);
+            position: absolute;
+            top: 12%;
+            height: 50px;
+            width: 100%;
         }
 
-        #section1, #section2, #section3, #section4,  #section5{
-            padding-top: 5px;
-            min-height: 120vh; 
+        .above-nav {
+            background-color: white; /* Color for the area above the nav bar */
+            height: 100px; /* Set this to control the height of the area above the nav bar */
         }
+
+        nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content:left;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  padding: 10px 20px;
+  display: block;
+}
+        
+#section1, #section2, #section3, #section4, #section5, #section6{
+  padding-top: 0;
+  padding-left: 0;
+  margin-left: 0;
+  min-height: 120vh;
+  font-size: 16px;
+  font-weight: bold;
+}
 
         div h1{
             position: relative;
@@ -73,97 +81,118 @@
             border: 1px solid black;
             text-align: center;
         }
+        
     </style>
     
 </head>
 <body style="height: 15000px;">
-    <div id="nav-toggle">&#9776;</div>
-
-    <nav>
-        <a href="#section1" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Home Page</a>
-        <a href="#section2" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Break Even Point Analysis</a>
-        <a href="#section3" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Cumulative Savings Calculation</a>
-        <a href="#section4" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Real-time Mortgage</a>
-        <a href="#section5" style="color:black;  font-weight: bold; font-size: large; text-align: center;">Amortization_Schedule</a>
-    </nav>
+    <button id="getStarted">Get Started</button>
     
     <div id="section1">
-        <h1>Refinance break-even point Calculator</h1>
-        <h2 style="position: relative; left: 80px; top: 40px;"> Data</h2>
-        <h2 style="position: relative; left: 830px; top: 0px;"> Formulas</h2>
-        <hr>
-        <table border="1"  style="position: relative; left: 80px; top: 30px;">
-            <tr>
-                <th>Column</th>
-                <th>Description</th>
-            </tr>
-            {% for key, value in description.items() %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-            </tr>
-            {% endfor %}
-        </table>
 
-        <div style="position: absolute; right: 50px; top: 180px;">
-            <hr>
-            <h4>1. Monthly Payment</h4>
-            <p>The monthly payment is calculated using the following formula:</p>
-            <center>
-                <p>\( M = P \frac{r(1 + r)^n}{(1+r)^n - 1} \)</p>
-            </center>
-            <p>where \( M \) is the monthly payment, \( P \) is the principal (Outstanding balance), \( r \) is 
-            <br> the monthly interest rate, and \( n \) is the number of months.</p>
-            <h4>2. Outstanding Balance</h4>
-            <p>The outstanding balance is calculated using the following formula:</p>
-            <center>
-                <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
-            </center></div>
+        <div class="above-nav">
+            <img src="/static/logo.jpg" alt="Baynovation Logo" 
+            style="position: absolute; left: 70px; top: 0px; font-size: xx-small; border-radius: 100%; width: 120px; height: 120px;">
+        </div>
 
-            <h2 style="position: relative; left: 80px; top: 100px;"> Definitions</h2>
-            <ul style="position: absolute; left: 50px; top: 580px;">
-                <li>
-                    <strong>Break even monthly payment savings:</strong> The number of months it will take for your monthly payment reduction to be greater than closing costs.<br>
-                    <strong>Break even PMI & Interest savings:</strong> The number of months it will take for your interest and PMI savings to exceed your closing costs.<br>
-                    <strong>Other closing costs:</strong> Estimate of all other closing costs for this loan. This should include filing fees, appraiser fees and any other miscellaneous fees paid.<br>
-                    
-                </li>
-            <p style="cursor: pointer; font-size: medium;">Credit: Shuyan Kang</p> 
+        <nav>
+            <ul>
+              <li><a href="#section1">Section 1</a></li>
+              <li><a href="#section2">Section 2</a></li>
+              <li><a href="#section3">Section 3</a></li>
+              <li><a href="#section4">Section 4</a></li>
+              <li><a href="#section5">Section 5</a></li>
             </ul>
+          </nav>
+
+        <div >
+            <h1 style="position: absolute; left: 480px; top: 160px;">Refinance break-even point Calculator</h1>
+            <h2 style="position: absolute; left: 80px; top: 220px;"> Data</h2>
+            <h2 style="position: absolute; left: 830px; top: 220px;"> Formulas</h2>
+    
+    
+            <table border="1"  style="position: absolute; left: 80px; top: 280px;">
+                <tr>
+                    <th>Column</th>
+                    <th>Description</th>
+                </tr>
+                {% for key, value in description.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+    
+            <div style="position: absolute; right: 50px; top: 280px;">
+                <h4>1. Monthly Payment</h4>
+                <p>The monthly payment is calculated using the following formula:</p>
+                <center>
+                    <p>\( M = P \frac{r(1 + r)^n}{(1+r)^n - 1} \)</p>
+                </center>
+                <p>where \( M \) is the monthly payment, \( P \) is the principal (Outstanding balance), \( r \) is 
+                <br> the monthly interest rate, and \( n \) is the number of months.</p>
+                <h4>2. Outstanding Balance</h4>
+                <p>The outstanding balance is calculated using the following formula:</p>
+                <center>
+                    <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
+                </center></div>
+    
+                <h2 style="position: absolute; left: 80px; top: 580px;"> Definitions</h2>
+                <ul style="position: absolute; left: 50px; top: 650px;">
+                    <li>
+                        <strong>Break even monthly payment savings:</strong> The number of months it will take for your monthly payment reduction to be greater than closing costs.<br>
+                        <strong>Break even PMI & Interest savings:</strong> The number of months it will take for your interest and PMI savings to exceed your closing costs.<br>
+                        <strong>Other closing costs:</strong> Estimate of all other closing costs for this loan. This should include filing fees, appraiser fees and any other miscellaneous fees paid.<br>
+                        
+                    </li>
+                <p style="cursor: pointer; font-size: medium;">Credit: Shuyan Kang</p> 
+                </ul>
+        </div>
+    
+
+        
+    </div>
+
+    <div id="section2" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h1 style="text-align: center;">Refinance Calculator</h1>
+
+        <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
+            <label for="p">Principal:</label>
+        <input type="number" id="p" name="p" required><br><br>
+      
+        <label for="r">Current interest rate:</label>
+        <input type="float" id="r" name="r" required><br><br>
+
+        <label for="N">Current total term:</label>
+        <input type="number" id="N" name="N" required><br><br>
+
+        <label for="n">Current remaining term:</label>
+        <input type="number" id="n" name="n" required><br><br>
+
+        <label for="new_r">New interest rate:</label>
+        <input type="float" id="new_r" name="new_r" required><br><br>
+
+        <label for="new_n">New remaining term:</label>
+        <input type="number" id="new_n" name="new_n" required><br><br>
+
+        <label for="c">Closing cost:</label>
+        <input type="number" id="c" name="c" required><br><br>
+
+        <label for="co">Cash out amount:</label>
+        <input type="number" id="co" name="co" required><br><br>
+        <button type="submit">Calculate</button>
+        </form>
+        
     </div>
 
 
-    <div id="section2" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <div id="section3" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Break Even Point Analysis</h1>
         <div style="display: flex; justify-content: space-around;">
-            <form style="width: 12%; position: absolute;left: 10%" action="/" method="post">
-                <label for="p">Principal:</label>
-            <input type="number" id="p" name="p" required><br><br>
-          
-            <label for="r">Current interest rate:</label>
-            <input type="float" id="r" name="r" required><br><br>
-    
-            <label for="N">Current total term:</label>
-            <input type="number" id="N" name="N" required><br><br>
-    
-            <label for="n">Current remaining term:</label>
-            <input type="number" id="n" name="n" required><br><br>
-    
-            <label for="new_r">New interest rate:</label>
-            <input type="float" id="new_r" name="new_r" required><br><br>
-    
-            <label for="new_n">New remaining term:</label>
-            <input type="number" id="new_n" name="new_n" required><br><br>
-    
-            <label for="c">Closing cost:</label>
-            <input type="number" id="c" name="c" required><br><br>
-    
-            <label for="co">Cash out amount:</label>
-            <input type="number" id="co" name="co" required><br><br>
-            <button type="submit">Calculate</button>
-            </form>
+            
             {% if result %}
-            <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px;">
+            <div style="width: 40%; border-left: 2px solid #ccc; padding-left: 20px; position: absolute;left: 10%">
                 <h3>Results:</h3>
             <p>Break-even Point: {{ result['break_even_point']|round(2) }} months</p>
             <p>Monthly Savings: {{ result['monthly_savings']|round(2)  }}</p>
@@ -180,7 +209,7 @@
 
     </div>
 
-    <div id="section3" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <div id="section4" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Cumulative Savings Calculation</h1>
         <div style="display: flex; justify-content: space-around;">
             {% if result1  %}
@@ -193,18 +222,18 @@
             {% endif %}
         </div>
         {% if plot2_path %}
-            <img src="{{ url_for('static', filename=plot2_path.split('/')[-1]) }}" alt="loan amortization schedule" style="width: 50%; height: 50%; position: absolute; top: 2100px; right: 100px">
+            <img src="{{ url_for('static', filename=plot2_path.split('/')[-1]) }}" alt="loan amortization schedule" style="width: 50%; height: 50%; position: absolute; top: 3000px; right: 100px">
         {% endif %}
 
         {% if plot4_path %}
-            <img src="{{ url_for('static', filename=plot4_path.split('/')[-1]) }}" alt="savings_interval" style="width: 50%; height: 50%; position: absolute; top: 2500px; right: 100px">
+            <img src="{{ url_for('static', filename=plot4_path.split('/')[-1]) }}" alt="savings_interval" style="width: 50%; height: 50%; position: absolute; top: 3400px; right: 100px">
         {% endif %}
     </div>
 
     
-    <div id="section4" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <div id="section5" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Real-time Mortgage</h1>
-        <div style="display: flex; justify-content: space-around; position: absolute; top: 3700px; left: 25%;">
+        <div style="display: flex; justify-content: space-around; position: absolute; top: 4700px; left: 25%;">
             <table style="width: 100%; border-collapse: collapse; padding: 10px;
             border: 1px solid black;
             text-align: center;">
@@ -246,7 +275,7 @@
         </div>
     </div>
 
-    <div id="section5" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <div id="section6" style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h1 style="text-align: center;">Amortization_Schedule</h1>
         <div style="display: flex; justify-content: space-evenly; background-image: url('/static/background.jpg'); background-size: cover; background-repeat: no-repeat;">
             {% if table_html %}
@@ -262,22 +291,8 @@
         </div>
     </div>
     
-    
 
     <script>
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-            });
-        });
-    });
-
-    document.getElementById('nav-toggle').addEventListener('click', function() {
-            const nav = document.querySelector('nav');
-            nav.classList.toggle('open'); 
-        });
 
     </script>
     
