@@ -18,3 +18,44 @@ Your main responsibilities will include:
 
 5. Documentation: Prepare documentation that outlines how the application works, its features, and any technical details that may be relevant for future maintenance.
 
+
+
+ rate_df =  get_mortgagerate()
+
+        return render_template('mortgage_calculator.html', result=result, result1=result1, 
+                               description=description, 
+                               rate_data=rate_df, table_html=table_html, plot1_path=plot1_path, 
+                               plot2_path=plot2_path, plot3_path=plot3_path, plot4_path=plot4_path)
+
+@app.route("/")
+def home():
+    rate_df = get_mortgagerate()
+    return render_template("mortgage_calculator.html", rate_data=rate_df, description=description)
+
+
+      <div style="display: flex; justify-content: space-around; position: absolute; top: 500px; left: 35%; width: 60%;">
+                    <table style="width: 100%; border-collapse: collapse; padding: 10px; border: 1px solid #dddddd; text-align: center; font-family: Arial, sans-serif;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="padding: 15px; border: 1px solid #dddddd; text-align: center;">Rate Type</th>
+                                {% for index, row in rate_data.iterrows() %}
+                                <th style="padding: 15px; border: 1px solid #dddddd; text-align: center;">{{ row['rate_type'] }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 15px; border: 1px solid #dddddd; text-align: center; font-weight: bold;">Rate</td>
+                                {% for index, row in rate_data.iterrows() %}
+                                <td style="padding: 15px; border: 1px solid #dddddd; text-align: center;">{{ row['rate'] }}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+          
+

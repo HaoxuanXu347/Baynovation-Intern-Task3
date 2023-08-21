@@ -447,7 +447,8 @@ def calculate_refinance():
         plot2_path = plot_loan_amortization_schedule(p, r, N, n, new_r, new_n, c, co)
         plot3_path = plot_break_even_period(p, r, N, n, new_r, new_n, c, co)
         plot4_path = plot_savings_interval(p, r, N, n, new_r, new_n, c, co, year_interval = 7)
-        
+    
+
         rate_df =  get_mortgagerate()
 
         return render_template('mortgage_calculator.html', result=result, result1=result1, 
@@ -459,6 +460,12 @@ def calculate_refinance():
 def home():
     rate_df = get_mortgagerate()
     return render_template("mortgage_calculator.html", rate_data=rate_df, description=description)
+
+
+
+@app.route('/mortgages')
+def mortgages():
+    return render_template('mortgages.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refinance Break Even Point Web Application</title>
+    <style>
+        body {
+            background-color: rgb(239, 234, 234);
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 100%;
+            margin: 0;
+        }
+        
+        #getStarted {
+            background-color: rgb(93, 183, 153);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            position: fixed;
+            border-radius: 10px;
+            top: 3%;
+            right: 30px;
+            padding: 12px 24px;
+        }
+
+        #getStarted:hover{
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #19a8b8;
+            transform: scale(1.2);
+            transition: all 0.3s ease;
+        }
+        .above-nav {
+            background-color: white;
+            height: 120px;
+        }
+        nav {
+            background-color: rgb(113, 182, 113);
+            position: absolute;
+            top: 12%;
+            height: 50px;
+            width: 100%;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: left;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 15px 20px;
+            display: block;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #section1,
+        #section2,
+        #section3,
+        #section4,
+        #section5,
+        #section6 {
+            padding-top: 0;
+            padding-left: 0;
+            margin-left: 0;
+            min-height: 120vh;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .container{
+            position: absolute;
+            top: 20%;
+            left: 5%;
+        }
+        
+
+    </style>
+
+</head>
+
+<body>
+    <button id="getStarted">Get Started</button>
+
+    <div class="above-nav">
+        <img src="/static/logo.jpg" alt="Baynovation Logo"
+            style="position: absolute; left: 80px; top: -20px; font-size: xx-small; border-radius: 10%; width: 130px; height: 130px;">
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/mortgages">Types of Mortgage</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Fixed-Rate Mortgage</h2>
+        <p>A fixed-rate mortgage is a type of mortgage where the interest rate remains constant for the entire term
+            of the loan. This provides borrowers with predictable monthly payments over the life of the loan.</p>
+
+        <h2>Adjustable-Rate Mortgage (ARM)</h2>
+        <p>An adjustable-rate mortgage, or ARM, has an interest rate that can change periodically. Typically, an ARM
+            starts with a lower initial rate that adjusts after a set period. Borrowers should be aware of potential
+            rate fluctuations.</p>
+
+        <h2>Interest-Only Mortgage</h2>
+        <p>With an interest-only mortgage, borrowers only pay the interest on the loan for a specific period. After
+            that, they start paying both principal and interest. It can offer lower initial payments but may result
+            in a larger final payment.</p>
+
+        <h2>Federal Housing Administration (FHA) Loan</h2>
+        <p>An FHA loan is a government-backed mortgage insured by the Federal Housing Administration. It is designed
+            to help low-to-moderate-income borrowers with lower down payments and more lenient credit requirements.
+        </p>
+
+        <h2>Veterans Affairs (VA) Loan</h2>
+        <p>VA loans are available to eligible veterans, active-duty service members, and some members of the
+            National Guard and Reserves. These loans typically require no down payment and offer favorable terms.
+        </p>
+
+        <h2>Jumbo Loan</h2>
+        <p>A jumbo loan is a type of mortgage that exceeds the conforming loan limits set by government agencies.
+            They are often used for high-priced properties and may have stricter qualification requirements.</p>
+    </div>
+
+</body>
+
+</html>
