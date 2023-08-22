@@ -397,23 +397,7 @@
                     <p>Outstanding Balance \( = P \times (1 + r)^{(N-n)} - M \times \frac{(1 + r)^{(N-n)} - 1}{r} \)</p>
                 </center>
             </div>
-
-            <h2 style="position: absolute; left: 80px; top: 580px;"> Definitions</h2>
-            <ul style="position: absolute; left: 50px; top: 650px;">
-                <li>
-                    <strong>Break even monthly payment savings:</strong> The number of months it will take for your
-                    monthly payment reduction to be greater than closing costs.<br>
-                    <strong>Break even PMI & Interest savings:</strong> The number of months it will take for your
-                    interest and PMI savings to exceed your closing costs.<br>
-                    <strong>Other closing costs:</strong> Estimate of all other closing costs for this loan. This should
-                    include filing fees, appraiser fees and any other miscellaneous fees paid.<br>
-
-                </li>
-                <p style="cursor: pointer; font-size: medium;">Credit: Shuyan Kang</p>
-            </ul>
         </div>
-
-
 
     </div>
 
@@ -526,10 +510,8 @@
                 </div>
 
 
-
                 <a href="#section3"><button class="section-button">Break Even Point</button></a>
                 <a href="#section4"><button class="section-button2">Cumulative Savings</button></a>
-
                 <a href="#section6"><button class="section-button4">Amortization Schedule</button></a>
 
             </div>
@@ -566,8 +548,7 @@
                 style="width: 90%; height: 40%; position: absolute; top: 550px; right: 30px">
             {% endif %}
         </div>
-
-        <!-- Modal container -->
+        
         <div id="imgModal" class="modal">
             <span class="close" onclick="closeModal()">&times;</span>
             <img class="modal-content" id="imgInModal">
@@ -579,13 +560,12 @@
 
     <div id="section4"
         style="width: 90%; margin: auto; border: 2px solid #ccc; border-radius: 15px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-        <h1 style="text-align: center;">Amortization Schedule</h1>
+        <h1 style="text-align: center; color: #19a8b8;">Amortization Schedule</h1>
         <div
-            style="display: flex; justify-content: space-evenly; background-image: url('/static/background.jpg'); background-size: cover; background-repeat: no-repeat;">
+            style="display: flex; justify-content: space-evenly; background-color:rgb(239, 234, 234) ; background-size: cover; background-repeat: no-repeat;">
             {% if table_html %}
             <div
                 style="width: 80%; border-left: 2px solid #ccc; padding-left: 20px; margin-left: 100px; overflow: auto;">
-                <h3>Results:</h3>
                 <div style="width: 100%; overflow-x: auto;">
                     <table style="width: 50%; max-width: 100%;">
                         {{ table_html|safe }}

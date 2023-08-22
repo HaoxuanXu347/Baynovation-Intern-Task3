@@ -2,7 +2,7 @@
 Project Name: Refinance Break Even Point Web Application
 Author: Haoxuan Xu
 Credit: Shuyan Kang
-Date: 8/9/23 - 8/17/23
+Date: 8/9/23 - 8/22/23
 
 Description:
     develop a web application or GUI that assists users in calculating the refinance break-even point for their loans. 
